@@ -64,6 +64,7 @@ def sequelize(conn, root):
             for filename in filenames:
                 if filename.endswith(('.txt', '.csv')):
                     parent_dir = root.rpartition("/")[-1]
+                    parent_dir = parent_dir.replace('-', '_')
                     if query_processor.is_new_file(conn, parent_dir, filename):
                         print "Processing file: %s in directory: %s" % (filename, root)
                         file_path = os.path.join(root, filename)
@@ -76,7 +77,7 @@ def sequelize(conn, root):
                                 print "Creating table %s" % parent_dir
                                 query_processor.create_table(conn, parent_dir, cols)
 
-                            date = filename.split(".", 1)[0]
+                            date = filename.split("_", 1)[0]
                             file_data = [(date,) + tuple(row) for row in reader]
                             query_processor.insert_data_in_table(conn, parent_dir, cols, file_data)
 
